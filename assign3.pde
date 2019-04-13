@@ -1,4 +1,4 @@
-final int GAME_START = 0, GAME_RUN = 1, GAME_OVER = 2;
+final int GAME_START = 0, GAME_RUN = 1, GAME_OVER = 2; //setup
 int gameState = 0;
 
 final int GRASS_HEIGHT = 15;
