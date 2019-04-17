@@ -102,7 +102,6 @@ void setup() {
 }
 
 void draw() {
-  clear();
   /* ------ Debug Function ------ 
 
       Please DO NOT edit the code here.
