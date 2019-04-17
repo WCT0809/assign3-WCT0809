@@ -1,4 +1,4 @@
-final int GAME_START = 0, GAME_RUN = 1, GAME_OVER = 2;
+final int GAME_START = 0, GAME_RUN = 1, GAME_OVER = 2,GAME_WIN = 3;
 int gameState = 0;
 
 final int GRASS_HEIGHT = 15;
@@ -6,7 +6,12 @@ final int START_BUTTON_W = 144;
 final int START_BUTTON_H = 60;
 final int START_BUTTON_X = 248;
 final int START_BUTTON_Y = 360;
-
+  
+PImage bg, cabbage, life, soldier;
+PImage soil0, soil1, soil2, soil3, soil4, soil5; 
+PImage stone1, stone2; 
+PImage groundhogDown, groundhogIdle, groundhogLeft, groundhogRight;
+PImage startHovered, startNormal, restartHovered, restartNormal, title, gameover;          //all image
 int groundhogX, groundhogY;//about groundhog Location
 final int groundhog_IDLE = 0;
 final int groundhog_LEFT = 1;
@@ -22,29 +27,29 @@ int soilStartX, soilStartY, soilEndX, soilEndY;
 int [][]soilMatrix=new int[24][8];
 int [][]stoneMatrix=new int[24][8];
 int soilLowBound;
-PImage title, gameover, startNormal, startHovered, restartNormal, restartHovered;
-PImage bg, soil8x24;
-PImage soil0, soil1, soil2, soil3, soil4, soil5; 
-PImage stone1, stone2,life; 
-PImage groundhogDown, groundhogIdle, groundhogLeft, groundhogRight;
-
 // For debug function; DO NOT edit or remove this!
-int HP = 0;
+int playerHealth = 0;
 float cameraOffsetY = 0;
 boolean debugMode = false;
 
 void setup() {
 	size(640, 480, P2D);
+  frameRate(60);  
 	// Enter your setup code here (please put loadImage() here or your game will lag like crazy)
 	bg = loadImage("img/bg.jpg");
+  life=loadImage("img/life.png");
 	title = loadImage("img/title.jpg");
 	gameover = loadImage("img/gameover.jpg");
 	startNormal = loadImage("img/startNormal.png");
 	startHovered = loadImage("img/startHovered.png");
 	restartNormal = loadImage("img/restartNormal.png");
 	restartHovered = loadImage("img/restartHovered.png");
-	soil8x24 = loadImage("img/soil8x24.png");
 
+  groundhogDown=loadImage("img/groundhogDown.png");
+  groundhogIdle=loadImage("img/groundhogIdle.png");
+  groundhogLeft=loadImage("img/groundhogLeft.png");
+  groundhogRight=loadImage("img/groundhogRight.png");
+  
   soil0=loadImage("img/soil0.png");
   soil1=loadImage("img/soil1.png");
   soil2=loadImage("img/soil2.png");
@@ -53,6 +58,7 @@ void setup() {
   soil5=loadImage("img/soil5.png");
   stone1=loadImage("img/stone1.png");
   stone2=loadImage("img/stone2.png");
+//	soil8x24 = loadImage("img/soil8x24.png"); //noshow this
   //soilMatrix
   for(int i=0; i<24; i++) {
     for (int j=0; j<8; j++) {
@@ -89,10 +95,13 @@ void setup() {
 
     }
   }
+  
+
 }
 
 void draw() {
-    /* ------ Debug Function ------ 
+  clear();
+  /* ------ Debug Function ------ 
 
       Please DO NOT edit the code here.
       It's for reviewing other requirements when you fail to complete the camera moving requirement.
@@ -145,9 +154,10 @@ void draw() {
 		rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT);
 
 		// Soil - REPLACE THIS PART WITH YOUR LOOP CODE!
-		for(int i=soilLowBound, m=0; i<soilLowBound+6; i++, m++) {
-        	for (int j=0; j<8; j++) {
-         	 switch(soilMatrix[i][j]) {
+//		image(soil8x24, 0, 160);
+      for(int i=soilLowBound, m=0; i<soilLowBound+6; i++, m++) {
+        for (int j=0; j<8; j++) {
+          switch(soilMatrix[i][j]) {
             case 0:            image(soil0,80*j,soilStartY+m*80,80,80);
             break;
             case 1:            image(soil1,80*j,soilStartY+m*80,80,80);
@@ -166,18 +176,22 @@ void draw() {
             break;
             case 2:            image(stone2,80*j,soilStartY+m*80,80,80);
             break;
+          }
+        }
+      }
 		// Player
-      		if (groundhogYLevel==0) rect(0,145,640,15);
-      		if (groundhogYLevel==1) rect(0,65,640,15);
+      if (groundhogYLevel==0) rect(0,145,640,15);
+      if (groundhogYLevel==1) rect(0,65,640,15);
       
-     		if(groundhogYLevel>1) soilStartY=0;
-      		if(groundhogYLevel==1) soilStartY=80;
-      		if(groundhogYLevel==0) soilStartY=160;
-     		soilLowBound=groundhogYLevel;
-     		if(soilLowBound<2) soilLowBound=0;
-     		else soilLowBound=soilLowBound-2;
-     		if(soilLowBound>18) soilLowBound=18;
- if (isActive==false) groundhogState=groundhog_IDLE;
+      if(groundhogYLevel>1) soilStartY=0;
+      if(groundhogYLevel==1) soilStartY=80;
+      if(groundhogYLevel==0) soilStartY=160;
+      soilLowBound=groundhogYLevel;
+      if(soilLowBound<2) soilLowBound=0;
+      else soilLowBound=soilLowBound-2;
+      if(soilLowBound>18) soilLowBound=18;
+      
+            if (isActive==false) groundhogState=groundhog_IDLE;
       
       switch(groundhogState) {
         case groundhog_IDLE:
@@ -221,9 +235,10 @@ void draw() {
             }
         break;
       }
+      
 		// Health UI
       for(int i=0; i<HP; i++)
-        image(life,10+60*i,10,50,51); 
+        image(life,10+60*i,10,50,51);     
 		break;
 
 		case GAME_OVER: // Gameover Screen
@@ -308,7 +323,7 @@ void keyPressed(){
 }
 
 void keyReleased(){
-  switch(keyCode){
+    switch(keyCode){
     case DOWN:
     downPressed = false;
     break;
