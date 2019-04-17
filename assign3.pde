@@ -19,7 +19,7 @@ final int groundhog_RIGHT = 2;
 final int groundhog_DOWN = 3;
 int groundhogState = groundhog_IDLE;
 
-int HP=2,nowframeCount;                                                                 //frameCount about groundhog*
+int nowframeCount;                                                                 //frameCount about groundhog*
 boolean upPressed, downPressed, rightPressed, leftPressed, isActive=false;                //about groundhog control
 
 int groundhogYLevel=0;
@@ -58,6 +58,8 @@ void setup() {
   soil5=loadImage("img/soil5.png");
   stone1=loadImage("img/stone1.png");
   stone2=loadImage("img/stone2.png");
+  groundhogX = 320;
+  groundhogY = 80;  
 //	soil8x24 = loadImage("img/soil8x24.png"); //noshow this
   //soilMatrix
   for(int i=0; i<24; i++) {
@@ -237,7 +239,7 @@ void draw() {
       }
       
 		// Health UI
-      for(int i=0; i<HP; i++)
+      for(int i=0; i<playerHealth; i++)
         image(life,10+60*i,10,50,51);     
 		break;
 
