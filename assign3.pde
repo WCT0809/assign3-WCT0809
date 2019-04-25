@@ -382,8 +382,7 @@ void keyPressed(){
       if(groundHogX >= 560){right = false;right2 = false;}
       if(down || down2){right = false;right2 = false;}  // Prevent bug
       if(left || left2){right = false;right2 = false;}  // Prevent bug
-      break;
-        
+      break;      
     }
   }
 }
